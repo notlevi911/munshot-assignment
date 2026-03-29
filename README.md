@@ -41,6 +41,18 @@ munshot/
 ```bash
 cd backend
 
+### 1a. Environment Variables
+
+Before running, create a `.env` file in the `backend/` directory with the following keys for the scraper and AI to work:
+
+```env
+AMAZON_EMAIL=your_amazon_email@example.com
+AMAZON_PASSWORD=your_amazon_password
+GEMINI_API_KEY=your_gemini_api_key  # Get a free key at aistudio.google.com
+```
+
+### 1b. Installation & Run
+
 # Activate the virtual environment
 # Windows:
 .\venv\Scripts\activate

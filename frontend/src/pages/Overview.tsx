@@ -41,6 +41,15 @@ function ScrapingWidget() {
   const [status, setStatus] = useState<'idle' | 'running'>('idle')
   const [logs, setLogs] = useState('')
   const [open, setOpen] = useState(false)
+  const [seconds, setSeconds] = useState(0)
+
+  useEffect(() => {
+    let timer: any;
+    if (status === 'running') {
+      timer = setInterval(() => setSeconds(s => s + 1), 1000)
+    }
+    return () => clearInterval(timer)
+  }, [status])
 
   useEffect(() => {
     let interval: any;
@@ -64,6 +73,7 @@ function ScrapingWidget() {
     try {
       await fetch('http://localhost:8000/api/scrape', { method: 'POST' })
       setStatus('running')
+      setSeconds(0)
       setOpen(true)
     } catch {
       alert("Failed to start scraping. Is the backend running?")
@@ -74,7 +84,7 @@ function ScrapingWidget() {
     <div style={{ position: 'relative', zIndex: 50 }}>
       {status === 'running' ? (
         <button onClick={() => setOpen(!open)} style={{ background: 'rgba(255,165,0,0.1)', color: 'orange', border: '1px solid orange', padding: '6px 12px', borderRadius: 4, cursor: 'pointer', fontSize: 13 }}>
-          ⏳ Scraping...
+          ⏳ Scraping... ({seconds}s)
         </button>
       ) : (
         <button onClick={trigger} style={{ background: '#2563eb', color: 'white', border: 'none', padding: '6px 12px', borderRadius: 4, cursor: 'pointer', fontSize: 13 }}>

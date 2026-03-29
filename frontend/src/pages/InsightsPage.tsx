@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchInsights, type Insight } from '../api/client'
-import { AlertTriangle, TrendingUp, Info, CheckCircle, Zap } from 'lucide-react'
+import { AlertTriangle, Info, CheckCircle, Zap } from 'lucide-react'
 
 const TYPE_CONFIG = {
   warning: { icon: AlertTriangle, color: 'var(--accent-orange)', badge: 'badge-orange', label: '⚠ Watch Out' },
@@ -18,12 +18,24 @@ export default function InsightsPage() {
   const [insights, setInsights] = useState<Insight[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [seconds, setSeconds] = useState(0)
 
   useEffect(() => {
-    fetchInsights().then(d => { setInsights(d); setLoading(false) }).catch(e => { setError(e.message); setLoading(false) })
+    let t = setInterval(() => setSeconds(s => s + 1), 1000)
+    fetchInsights().then(d => { setInsights(d); setLoading(false); clearInterval(t) }).catch(e => { setError(e.message); setLoading(false); clearInterval(t) })
+    return () => clearInterval(t)
   }, [])
 
-  if (loading) return <div className="loading-wrap"><div className="spinner" /></div>
+  if (loading) return (
+    <div className="loading-wrap" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: 24 }}>
+      <div className="spinner-large" />
+      <div style={{ textAlign: 'center' }}>
+        <h3 className="gradient-text" style={{ fontSize: 20, marginBottom: 8, marginTop: 16 }}>Generating AI Insights</h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Analyzing brands, sentiments, and prices using Gemini API...</p>
+        <div style={{ marginTop: 16, fontSize: 13, color: 'var(--accent-blue)', fontWeight: 600, background: 'rgba(79, 142, 247, 0.1)', padding: '6px 16px', borderRadius: 20, display: 'inline-block' }}>Time elapsed: {seconds}s</div>
+      </div>
+    </div>
+  )
   if (error) return <div className="page-body"><div className="error-box">⚠️ {error}</div></div>
 
   return (
