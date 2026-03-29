@@ -40,6 +40,15 @@ THEME_KEYWORDS = {
     },
 }
 
+def _sanitize(obj):
+    if isinstance(obj, float) and math.isnan(obj):
+        return None
+    elif isinstance(obj, dict):
+        return {k: _sanitize(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_sanitize(v) for v in obj]
+    return obj
+
 
 def _load_data():
     products_path = os.path.join(DATA_DIR, "products.csv")
@@ -69,7 +78,7 @@ def get_overview() -> dict:
     top_brand = brand_ratings.idxmax()
     bottom_brand = brand_ratings.idxmin()
 
-    return {
+    return _sanitize({
         "total_brands": len(brands),
         "total_products": len(products_df),
         "total_reviews_scraped": len(reviews_df),
@@ -78,10 +87,10 @@ def get_overview() -> dict:
         "avg_price": avg_price,
         "avg_discount_pct": avg_discount,
         "avg_rating": avg_rating,
-        "top_rated_brand": top_brand,
-        "lowest_rated_brand": bottom_brand,
+        "top_rated_brand": top_rated,
+        "lowest_rated_brand": lowest_rated,
         "brands": brands,
-    }
+    })
 
 
 def get_brand_summary(brand: str | None = None) -> list[dict]:
@@ -134,7 +143,7 @@ def get_brand_summary(brand: str | None = None) -> list[dict]:
             "categories": bp["category"].value_counts().to_dict(),
         })
 
-    return results
+    return _sanitize(results)
 
 
 def _price_band_distribution(bp: pd.DataFrame) -> dict:
@@ -194,7 +203,7 @@ def get_products(
         df = df.sort_values(sort_by, ascending=ascending)
 
     records = df.to_dict("records")
-    return [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()} for r in records]
+    return _sanitize(records)
 
 
 def get_product_detail(asin: str) -> dict | None:
@@ -234,7 +243,7 @@ def get_product_detail(asin: str) -> dict | None:
         "top_themes_negative": _extract_themes(neg, "negative"),
         "top_reviews": top_reviews,
     }
-    return {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in result.items()}
+    return _sanitize(result)
 
 
 def get_comparison(brands: list[str]) -> list[dict]:
@@ -252,7 +261,7 @@ def get_themes() -> list[dict]:
             if col in br.columns:
                 aspect_scores[aspect] = round(float(br[col].mean()), 3)
         result.append({"brand": brand, "aspect_scores": aspect_scores})
-    return result
+    return _sanitize(result)
 
 
 def get_insights() -> list[dict]:
