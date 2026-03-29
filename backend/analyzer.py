@@ -87,8 +87,8 @@ def get_overview() -> dict:
         "avg_price": avg_price,
         "avg_discount_pct": avg_discount,
         "avg_rating": avg_rating,
-        "top_rated_brand": top_rated,
-        "lowest_rated_brand": lowest_rated,
+        "top_rated_brand": top_brand,
+        "lowest_rated_brand": bottom_brand,
         "brands": brands,
     })
 
@@ -223,7 +223,11 @@ def get_product_detail(asin: str) -> dict | None:
     for aspect in ASPECTS:
         col = f"aspect_{aspect}"
         if col in reviews.columns:
-            aspect_scores[aspect] = round(float(reviews[col].mean()), 3)
+            valid = reviews[reviews[col] != 0][col]
+            if not valid.empty:
+                aspect_scores[aspect] = round(float(valid.mean()), 3)
+            else:
+                aspect_scores[aspect] = None
 
     top_reviews = reviews.nlargest(3, "helpful_votes")[
         ["review_id", "rating", "title", "body", "sentiment", "compound_score", "review_date"]
@@ -259,7 +263,11 @@ def get_themes() -> list[dict]:
         for aspect in ASPECTS:
             col = f"aspect_{aspect}"
             if col in br.columns:
-                aspect_scores[aspect] = round(float(br[col].mean()), 3)
+                valid = br[br[col] != 0][col]
+                if not valid.empty:
+                    aspect_scores[aspect] = round(float(valid.mean()), 3)
+                else:
+                    aspect_scores[aspect] = None
         result.append({"brand": brand, "aspect_scores": aspect_scores})
     return _sanitize(result)
 

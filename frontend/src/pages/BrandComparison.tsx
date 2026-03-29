@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis,
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, Cell,
 } from 'recharts'
 import { fetchBrands, type BrandSummary } from '../api/client'
 
@@ -90,9 +90,9 @@ export default function BrandComparison() {
           <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
           <Tooltip content={<CustomTooltip />} />
           <Bar dataKey="value" name={METRIC_LABELS[key]} radius={[4, 4, 0, 0]}>
-            {vals.map((entry, i) => {
+            {vals.map((_, i) => {
               const fullName = filtered[i]?.brand ?? ''
-              return <rect key={fullName} fill={BRAND_COLORS[fullName] ?? '#4f8ef7'} />
+              return <Cell key={fullName} fill={BRAND_COLORS[fullName] ?? '#4f8ef7'} />
             })}
           </Bar>
         </BarChart>

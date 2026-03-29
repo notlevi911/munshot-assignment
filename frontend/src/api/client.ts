@@ -107,7 +107,20 @@ export const fetchBrand = (brand: string) => api.get<BrandSummary>(`/api/brand/$
 export const fetchProducts = (params?: Record<string, string | number | undefined>) =>
   api.get<Product[]>('/api/products', { params }).then(r => r.data);
 export const fetchProduct = (asin: string) => api.get<ProductDetail>(`/api/product/${asin}`).then(r => r.data);
-export const fetchCompare = (brands: string[]) =>
-  api.get<BrandSummary[]>('/api/compare', { params: { brands: brands.join(',') } }).then(r => r.data);
-export const fetchInsights = () => api.get<Insight[]>('/api/insights').then(r => r.data);
+export async function fetchCompare(brands: string): Promise<BrandSummary[]> {
+  const res = await api.get('/api/compare', { params: { brands } })
+  return res.data
+}
+
+let cachedInsights: Insight[] | null = null;
+
+export async function fetchInsights(forceRefresh: boolean = false): Promise<Insight[]> {
+  if (cachedInsights && !forceRefresh) {
+    return cachedInsights;
+  }
+  const res = await api.get('/api/insights')
+  cachedInsights = res.data;
+  return res.data
+}
+
 export const fetchThemes = () => api.get<ThemeData[]>('/api/themes').then(r => r.data);

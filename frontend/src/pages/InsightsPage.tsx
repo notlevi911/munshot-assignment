@@ -20,10 +20,18 @@ export default function InsightsPage() {
   const [error, setError] = useState<string | null>(null)
   const [seconds, setSeconds] = useState(0)
 
-  useEffect(() => {
+  const loadInsights = (forceRefresh = false) => {
+    setLoading(true)
+    setError(null)
+    setSeconds(0)
     let t = setInterval(() => setSeconds(s => s + 1), 1000)
-    fetchInsights().then(d => { setInsights(d); setLoading(false); clearInterval(t) }).catch(e => { setError(e.message); setLoading(false); clearInterval(t) })
-    return () => clearInterval(t)
+    fetchInsights(forceRefresh)
+      .then(d => { setInsights(d); setLoading(false); clearInterval(t) })
+      .catch(e => { setError(e.message); setLoading(false); clearInterval(t) })
+  }
+
+  useEffect(() => {
+    loadInsights()
   }, [])
 
   if (loading) return (
@@ -48,6 +56,7 @@ export default function InsightsPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--accent-purple)' }}>
           <Zap size={16} />
           <span>{insights.length} insights generated</span>
+          <button className="btn-primary" onClick={() => loadInsights(true)} style={{ marginLeft: 16, padding: '8px 16px', fontSize: 13 }}>Get Insights Again</button>
         </div>
       </div>
       <div className="page-body">

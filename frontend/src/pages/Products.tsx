@@ -37,10 +37,13 @@ function ProductDrilldown({ asin, onBack }: { asin: string; onBack: () => void }
     { name: 'Negative', value: detail.sentiment_distribution.negative },
   ]
 
-  const aspectData = ASPECTS.map(a => ({
-    aspect: a,
-    score: Math.round((detail.aspect_scores[a] ?? 0) * 100),
-  }))
+  const aspectData = ASPECTS.map(a => {
+    const s = detail.aspect_scores[a]
+    return {
+      aspect: a,
+      score: s != null ? Math.round(s * 100) : null,
+    }
+  }).filter(a => a.score !== null)
 
   return (
     <>
@@ -111,17 +114,23 @@ function ProductDrilldown({ asin, onBack }: { asin: string; onBack: () => void }
         {/* Aspect sentiment */}
         <div className="card" style={{ marginBottom: 20 }}>
           <div className="card-title">Aspect-Level Sentiment (×100)</div>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={aspectData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis type="number" domain={[-100, 100]} tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickFormatter={v => `${v}`} />
-              <YAxis type="category" dataKey="aspect" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} width={70} />
-              <Tooltip />
-              <Bar dataKey="score" name="Score" radius={[0, 4, 4, 0]}>
-                {aspectData.map((a, i) => <rect key={i} fill={a.score >= 0 ? '#22c55e' : '#ef4444'} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          {aspectData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={Math.max(120, aspectData.length * 40)}>
+              <BarChart data={aspectData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis type="number" domain={[-100, 100]} tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickFormatter={v => `${v}`} />
+                <YAxis type="category" dataKey="aspect" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} width={70} />
+                <Tooltip />
+                <Bar dataKey="score" name="Score" radius={[0, 4, 4, 0]}>
+                  {aspectData.map((a, i) => <Cell key={i} fill={a.score! >= 0 ? '#22c55e' : '#ef4444'} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13, fontStyle: 'italic' }}>
+              No feature-specific sentiment detected in reviews.
+            </div>
+          )}
         </div>
 
         <div className="grid-2" style={{ marginBottom: 20 }}>

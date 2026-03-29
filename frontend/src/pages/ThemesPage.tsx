@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchThemes, type ThemeData } from '../api/client'
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from 'recharts'
 
 const ASPECTS = ['wheels', 'handle', 'material', 'zipper', 'size', 'durability', 'lock', 'weight'] as const
@@ -104,7 +104,7 @@ export default function ThemesPage() {
                 <YAxis type="category" dataKey="brand" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} width={55} />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="score" name={`${selectedAspect} score`} radius={[0, 4, 4, 0]}>
-                  {aspectBarData.map((d, i) => <rect key={i} fill={BRAND_COLORS[d.fullBrand] ?? '#4f8ef7'} />)}
+                  {aspectBarData.map((d, i) => <Cell key={i} fill={BRAND_COLORS[d.fullBrand] ?? '#4f8ef7'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
