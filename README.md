@@ -15,6 +15,16 @@ Powered by autonomous **Playwright browser automation**, **VADER Sentiment Analy
 *   **Backend**: FastAPI, Python (Uvicorn), Playwright (Async API), Pandas, NLTK/VADER (Sentiment), Google GenAI SDK.
 *   **Frontend**: React 18, Vite, TypeScript, Recharts, Lucide React, Custom CSS.
 
+## 🕵️ How the Scraper Works
+
+The background scraping engine (`scraper.py`) is the backbone of Luggage IQ. It uses the **Playwright Async API** to autonomously navigate Amazon India and extract pristine product and review data. Here is how the pipeline operates:
+
+1.  **Headless Execution**: The scraper spins up an invisible Chromium instance, keeping your desktop clean while it works in the background.
+2.  **Direct Login Authentication**: To bypass Amazon's notoriously strict homepage slider CAPTCHAs, the agent navigates directly to the Amazon OpenID sign-in URL (`/ap/signin`). 
+3.  **Programmatic Form Submission**: Instead of relying on brittle DOM selectors to find "Sign In" buttons (which Amazon frequently renames to throw off bots), the agent types the credentials and simulates `page.press('Enter')` directly on the keyboard.
+4.  **Intelligent Bot Bypass**: The golden rule of scraping is mimicking human behavior. The Playwright agent injects randomized, human-like `page.wait_for_timeout(2000, 4000)` pauses (2 to 4 seconds) between every major click, search, and page transition to ensure it stays completely undetected by Amazon's velocity checks.
+5.  **Execution Time**: Given the necessary 2-4 second pauses to avoid bans, a full scraping cycle spanning 6 luggage brands, 10 products per brand, and 50 reviews per brand takes **approximately 4 minutes** to complete.
+
 ## ⚙️ Quick Start Installation
 
 ### 1. Environment Variables
