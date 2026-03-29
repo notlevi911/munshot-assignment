@@ -41,12 +41,12 @@ function ScrapingWidget() {
   const [status, setStatus] = useState<'idle' | 'running'>('idle')
   const [logs, setLogs] = useState('')
   const [open, setOpen] = useState(false)
-  const [seconds, setSeconds] = useState(0)
+  const [secondsLeft, setSecondsLeft] = useState(240)
 
   useEffect(() => {
     let timer: any;
     if (status === 'running') {
-      timer = setInterval(() => setSeconds(s => s + 1), 1000)
+      timer = setInterval(() => setSecondsLeft(s => Math.max(0, s - 1)), 1000)
     }
     return () => clearInterval(timer)
   }, [status])
@@ -73,7 +73,7 @@ function ScrapingWidget() {
     try {
       await fetch('http://localhost:8000/api/scrape', { method: 'POST' })
       setStatus('running')
-      setSeconds(0)
+      setSecondsLeft(240)
       setOpen(true)
     } catch {
       alert("Failed to start scraping. Is the backend running?")
@@ -84,7 +84,7 @@ function ScrapingWidget() {
     <div style={{ position: 'relative', zIndex: 50 }}>
       {status === 'running' ? (
         <button onClick={() => setOpen(!open)} style={{ background: 'rgba(255,165,0,0.1)', color: 'orange', border: '1px solid orange', padding: '6px 12px', borderRadius: 4, cursor: 'pointer', fontSize: 13 }}>
-          ⏳ Scraping... ({seconds}s)
+          ⏳ Scraping... (~{Math.floor(secondsLeft / 60)}:{(secondsLeft % 60).toString().padStart(2, '0')} remaining)
         </button>
       ) : (
         <button onClick={trigger} style={{ background: '#2563eb', color: 'white', border: 'none', padding: '6px 12px', borderRadius: 4, cursor: 'pointer', fontSize: 13 }}>
@@ -118,8 +118,26 @@ export default function OverviewPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <div className="loading-wrap"><div className="spinner" /><span style={{ color: 'var(--text-muted)' }}>Loading dashboard…</span></div>
-  if (error) return <div className="page-body"><div className="error-box">⚠️ {error}<br /><small>Make sure the backend is running: <code>uvicorn main:app --reload</code></small></div></div>
+  if (loading) return <div className="loading-wrap"><div className="spinner-large" /><span style={{ color: 'var(--text-muted)' }}>Loading dashboard…</span></div>
+  
+  if (error) {
+    if (error.includes('503') || error.includes('Dataset not found')) {
+      return (
+        <div className="loading-wrap" style={{ height: '80vh', textAlign: 'center' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>🧳</div>
+          <h2 className="gradient-text" style={{ fontSize: 28, marginBottom: 12 }}>Welcome to Luggage IQ</h2>
+          <p style={{ color: 'var(--text-secondary)', maxWidth: 400, margin: '0 auto 32px', lineHeight: 1.6 }}>
+            No data has been scraped yet. Click the button below to launch the Playwright agent, auto-login to Amazon India, and collect live luggage intelligence data!
+          </p>
+          <div style={{ transform: 'scale(1.2)' }}>
+            <ScrapingWidget />
+          </div>
+        </div>
+      )
+    }
+    return <div className="page-body"><div className="error-box">⚠️ {error}<br /><small>Make sure the backend is running: <code>uvicorn main:app --reload</code></small></div></div>
+  }
+  
   if (!overview) return null
 
   const priceData = brands.map(b => ({ brand: b.brand.split(' ')[0], avg_price: Math.round(b.avg_price), avg_mrp: Math.round(b.avg_mrp) }))
