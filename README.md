@@ -19,7 +19,7 @@ Powered by autonomous **Playwright browser automation**, **VADER Sentiment Analy
 
 ### 1. Environment Variables
 
-Before launching the API, create a `.env` file in the `backend/` directory. You must supply your Amazon credentials for the scraper to login, along with a free Gemini API key for the AI-generated agent insights.
+Before launching the API, create a `.env` file in the `backend/` directory. You must supply your Amazon credentials (make sure no 2fa, and better to make a fake acc) for the scraper to login, along with a free Gemini API key for the AI-generated agent insights.
 
 ```env
 AMAZON_EMAIL=your_amazon_email@example.com
