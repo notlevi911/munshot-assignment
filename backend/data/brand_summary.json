@@ -1,0 +1,94 @@
+{
+  "American Tourister": {
+    "brand": "American Tourister",
+    "product_count": 10,
+    "review_count": 54,
+    "total_platform_reviews": 1435,
+    "avg_price": 3412.7,
+    "avg_mrp": 8048.0,
+    "avg_discount_pct": 54,
+    "avg_rating": 4.29,
+    "avg_sentiment": 0.421,
+    "positive_pct": 77.8,
+    "negative_pct": 5.6,
+    "aspect_scores": {
+      "wheels": 0.245,
+      "handle": 0.208,
+      "material": 0.327,
+      "zipper": 0.327,
+      "size": 0.238,
+      "durability": 0.347,
+      "lock": 0.258,
+      "weight": 0.479
+    }
+  },
+  "Safari": {
+    "brand": "Safari",
+    "product_count": 10,
+    "review_count": 54,
+    "total_platform_reviews": 1871,
+    "avg_price": 6587.2,
+    "avg_mrp": 12219.4,
+    "avg_discount_pct": 44.9,
+    "avg_rating": 4.27,
+    "avg_sentiment": 0.386,
+    "positive_pct": 77.8,
+    "negative_pct": 11.1,
+    "aspect_scores": {
+      "wheels": 0.273,
+      "handle": 0.205,
+      "material": 0.397,
+      "zipper": 0.261,
+      "size": 0.307,
+      "durability": 0.239,
+      "lock": 0.378,
+      "weight": 0.357
+    }
+  },
+  "VIP": {
+    "brand": "VIP",
+    "product_count": 9,
+    "review_count": 54,
+    "total_platform_reviews": 2142,
+    "avg_price": 4015.67,
+    "avg_mrp": 10625.56,
+    "avg_discount_pct": 61.9,
+    "avg_rating": 4.22,
+    "avg_sentiment": 0.295,
+    "positive_pct": 64.8,
+    "negative_pct": 20.4,
+    "aspect_scores": {
+      "wheels": 0.13,
+      "handle": -0.024,
+      "material": 0.0,
+      "zipper": 0.285,
+      "size": 0.695,
+      "durability": 0.28,
+      "lock": 0.334,
+      "weight": 0.236
+    }
+  },
+  "Skybags": {
+    "brand": "Skybags",
+    "product_count": 10,
+    "review_count": 54,
+    "total_platform_reviews": 3056,
+    "avg_price": 4025.7,
+    "avg_mrp": 11048.5,
+    "avg_discount_pct": 55.5,
+    "avg_rating": 4.3,
+    "avg_sentiment": 0.353,
+    "positive_pct": 72.2,
+    "negative_pct": 11.1,
+    "aspect_scores": {
+      "wheels": 0.348,
+      "handle": 0.069,
+      "material": 0.422,
+      "zipper": 0.261,
+      "size": 0.229,
+      "durability": 0.279,
+      "lock": 0.314,
+      "weight": 0.397
+    }
+  }
+}
